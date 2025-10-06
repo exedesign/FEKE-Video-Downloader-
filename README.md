@@ -73,6 +73,58 @@ Remove-Item -Recurse -Force "$name"
 
 Yeni build alırken yalnızca `version_name` güncellenebilir (semantik değişiklik yoksa). Mağazalarda (Chrome Web Store gibi) görsel sürüm açıklaması için faydalı.
 
+### Adım Adım Release Talimatı
+Bu proje için tipik bir sürüm (ör: 1.1.0) yayınlama akışı:
+
+1. Manifest SemVer Güncelle:
+	- `manifest.json` içinde `version` alanını yeni semantik sürüme çek (örn: 1.0.0 → 1.1.0)
+	- Güncel tarihin kısa kodunu (MMddyy) hesaplayıp `version_name` alanına yaz (örn: 06 Ekim 2025 → 100625)
+2. Değişiklikleri Commit Et:
+	- `git add manifest.json`
+	- `git commit -m "chore(release): bump version to 1.1.0"`
+3. Etiket Oluştur (Annotated Tag):
+	- `git tag -a v1.1.0 -m "FEKE-Video Downloader v1.1.0 (runtime i18n, UI improvements)"`
+	- `git push origin main && git push origin v1.1.0`
+4. Release Notu Hazırla (Örnek Şablon):
+	```
+	### Öne Çıkanlar
+	- Runtime i18n (popup anlık dil değişimi)
+	- `version_name` tarih kodu alanı
+	- Yeşil/beyaz yeni indirme butonu
+	- Dil değişiminde kaynak liste kaybı fix
+
+	### Teknik
+	- manifest: version=1.1.0, version_name=100625
+	- Tag: v1.1.0
+	```
+5. Paket Oluştur (Zip):
+	- Windows PowerShell:
+	  ```powershell
+	  $version = 'v1.1.0'
+	  $dateCode = '100625'
+	  $name = "FEKE-Video-Downloader-$version-$dateCode"
+	  if(Test-Path $name){ Remove-Item -Recurse -Force $name }
+	  New-Item -ItemType Directory -Path $name | Out-Null
+	  Copy-Item -Recurse -Force * $name -Exclude *.git*,node_modules,*.ps1
+	  Compress-Archive -Path "$name\*" -DestinationPath "$name.zip" -Force
+	  Remove-Item -Recurse -Force $name
+	  Write-Host "Created $name.zip"
+	  ```
+6. GitHub Release Aç:
+	- Tag: `v1.1.0` seç
+	- Başlık: `FEKE-Video Downloader v1.1.0`
+	- Notlar: 4. adımdaki şablon + gerekiyorsa hash
+	- Zip dosyasını yükle (örn: `FEKE-Video-Downloader-v1.1.0-100625.zip`)
+7. Doğrulama:
+	- Zip içindeki `manifest.json` sürümü & `version_name` doğru mu?
+	- FFmpeg wasm dosyaları dahil mi?
+	- Locale klasörleri eksiksiz mi?
+8. (Opsiyonel) Hash Üret:
+	- `shasum -a 256 FEKE-Video-Downloader-v1.1.0-100625.zip` (macOS/Linux)
+	- `Get-FileHash .\FEKE-Video-Downloader-v1.1.0-100625.zip -Algorithm SHA256` (Windows)
+
+> Not: Sadece içerik/metin değişiklikleri için semver patch (1.1.1) yeterli; davranışsal yeni özellik eklediysen minor (1.2.0), kırıcı değişiklikte major (2.0.0).
+
 ## 🗺 Yol Haritası (Özet)
 - Genişleyen platform yelpazesi (isim verilmeden çoğul akış kaynakları)
 - Ek akış protokolleri & formatları
