@@ -1,0 +1,14 @@
+{
+  "ext_name": {"message": "FEKE-Video Downloader"},
+  "ext_description": {"message": "Descargador de streams HLS (M3U8) y medios directos con multiplexado WASM"},
+  "label_video_select": {"message": "Seleccionar Video"},
+  "label_audio_select": {"message": "Seleccionar Audio"},
+  "btn_download": {"message": "Descargar"},
+  "status_ready": {"message": "Listo"},
+  "status_error_missing": {"message": "Variant o audio no encontrado"},
+  "error_url_missing": {"message": "Falta URL"},
+  "about_title": {"message": "Acerca de"},
+  "about_dev": {"message": "Desarrollador: Fatih Eke"},
+  "about_contact": {"message": "Contacto: fatiheke@gmail.com"},
+  "settings_language": {"message": "Idioma"}
+}

@@ -1,0 +1,14 @@
+{
+  "ext_name": {"message": "FEKE-Video Downloader"},
+  "ext_description": {"message": "HLS (M3U8) und direkte Medienströme herunterladen (WASM Mux)"},
+  "label_video_select": {"message": "Video wählen"},
+  "label_audio_select": {"message": "Audio wählen"},
+  "btn_download": {"message": "Herunterladen"},
+  "status_ready": {"message": "Bereit"},
+  "status_error_missing": {"message": "Variante oder Audio nicht gefunden"},
+  "error_url_missing": {"message": "URL fehlt"},
+  "about_title": {"message": "Info"},
+  "about_dev": {"message": "Entwickler: Fatih Eke"},
+  "about_contact": {"message": "Kontakt: fatiheke@gmail.com"},
+  "settings_language": {"message": "Sprache"}
+}

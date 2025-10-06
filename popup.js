@@ -2,9 +2,92 @@
 // MGX MEDIA DOWNLOADER - POPUP UI (CLEAN VERSION)
 // ============================================================================
 console.log('[MGX Popup] Minimal UI init');
+// ================== I18N SUPPORT ==================
+const I18N_KEYS = [
+  'label_video_select','label_audio_select','btn_download','status_ready',
+  'status_error_missing','error_url_missing','about_title','about_dev','about_contact'
+];
+let userLangOverride = null; // chrome.storage sync/local
+let runtimeMessages = null;  // override edilmiş dil sözlüğü
+
+async function loadUserLang(){
+  return new Promise(resolve=>{
+    chrome.storage.local.get(['feke_lang'], data=>{ userLangOverride = data.feke_lang || null; resolve(userLangOverride); });
+  });
+}
+function getBrowserLang(){
+  const l = navigator.language || 'en';
+  return l.split('-')[0];
+}
+function resolveLang(){
+  if(userLangOverride && userLangOverride!=='auto') return userLangOverride;
+  return getBrowserLang();
+}
+function translatePage(){
+  const usingOverride = userLangOverride && userLangOverride !== 'auto';
+  const msgProvider = key => {
+    if(usingOverride && runtimeMessages && runtimeMessages[key]) return runtimeMessages[key].message || runtimeMessages[key];
+    return chrome.i18n.getMessage(key);
+  };
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key = el.getAttribute('data-i18n');
+    const msg = msgProvider(key);
+    if(msg) el.textContent = msg;
+  });
+  const dlBtn = document.getElementById('downloadBtn');
+  if(dlBtn){ const m = msgProvider('btn_download'); if(m) dlBtn.textContent = m; }
+  const st = document.getElementById('pStatus');
+  if(st){ const m = msgProvider('status_ready'); if(m) st.textContent = m; }
+  const titleEl = document.getElementById('extTitle');
+  if(titleEl){
+    const nameMsg = msgProvider('ext_name');
+    if(nameMsg) titleEl.textContent = nameMsg;
+  }
+  const langSel=document.getElementById('langSelect');
+  if(langSel){ langSel.value = userLangOverride || 'auto'; }
+}
+
+async function loadRuntimeLocaleIfNeeded(){
+  if(!userLangOverride || userLangOverride==='auto'){ runtimeMessages=null; return; }
+  try {
+    const url = chrome.runtime.getURL(`_locales/${userLangOverride}/messages.json`);
+    const res = await fetch(url);
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    runtimeMessages = await res.json();
+  } catch(err){
+    console.warn('[i18n] Runtime locale fetch failed', err);
+    runtimeMessages = null; // fallback to chrome.i18n
+  }
+}
+function setErrorI18n(keyFallback, fallbackText){
+  const el = document.getElementById('pError');
+  if(!el) return; const msg = chrome.i18n.getMessage(keyFallback) || fallbackText;
+  el.textContent = msg; el.classList.remove('hidden');
+}
+// ================== END I18N SUPPORT ==============
 let currentTabId = null;
 let cachedM3U8 = [];
-document.addEventListener('DOMContentLoaded', () => { initMinimal(); });
+document.addEventListener('DOMContentLoaded', async () => { await loadUserLang(); initMinimal(); setupLanguageUI(); });
+
+function setupLanguageUI(){
+  const langSel = document.getElementById('langSelect');
+  const aboutBtn = document.getElementById('btnAbout');
+  const aboutPanel = document.getElementById('aboutPanel');
+  if(langSel){
+    langSel.addEventListener('change', async e=>{
+      const val = e.target.value;
+      userLangOverride = val;
+      chrome.storage.local.set({ feke_lang: val });
+      await loadRuntimeLocaleIfNeeded();
+      translatePage();
+    });
+  }
+  if(aboutBtn && aboutPanel){
+    aboutBtn.addEventListener('click', ()=>{
+      aboutPanel.classList.toggle('hidden');
+    });
+  }
+}
 
 // ============================================================================
 // LOAD MEDIA FILES
@@ -13,7 +96,8 @@ function initMinimal(){
   chrome.tabs.query({active:true,currentWindow:true}, tabs=>{
     if(!tabs[0]) return; currentTabId = tabs[0].id; refreshSources();
     const titleEl = document.getElementById('pageTitle');
-    if(titleEl) titleEl.textContent = (tabs[0].title || '').trim();
+  if(titleEl) titleEl.textContent = (tabs[0].title || '').trim();
+  translatePage();
     document.getElementById('downloadBtn').addEventListener('click', startDownloadClicked);
   });
 }
@@ -74,7 +158,7 @@ async function buildSources(){
   let defaultAudioIndex = Array.from(aSel.options).findIndex(op=>op.dataset.default==='1');
   if(defaultAudioIndex<0) defaultAudioIndex=0; if(aSel.options.length) aSel.selectedIndex=defaultAudioIndex;
 
-  if(!vSel.options.length || !aSel.options.length){ setError('Variant veya audio bulunamadı'); }
+  if(!vSel.options.length || !aSel.options.length){ setError(chrome.i18n.getMessage('status_error_missing') || 'Variant veya audio bulunamadı'); }
 }
 
 function qualityLabel(v){
@@ -110,7 +194,7 @@ function qualitySortKey(label){
 
 function startDownloadClicked(){
   clearError(); const vUrl=document.getElementById('videoSelect').value; const aUrl=document.getElementById('audioSelect').value;
-  if(!vUrl||!aUrl){ setError('URL eksik'); return; }
+  if(!vUrl||!aUrl){ setError(chrome.i18n.getMessage('error_url_missing') || 'URL eksik'); return; }
   disableUI(); parseAndMergeFFmpeg(vUrl,aUrl);
 }
 

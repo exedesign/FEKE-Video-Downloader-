@@ -1,0 +1,14 @@
+{
+  "ext_name": {"message": "FEKE-Video İndirici"},
+  "ext_description": {"message": "HLS (M3U8) ve doğrudan medya akışlarını indirme ve WASM mux birleştirme"},
+  "label_video_select": {"message": "Video Seç"},
+  "label_audio_select": {"message": "Ses Seç"},
+  "btn_download": {"message": "İndir"},
+  "status_ready": {"message": "Hazır"},
+  "status_error_missing": {"message": "Variant veya audio bulunamadı"},
+  "error_url_missing": {"message": "URL eksik"},
+  "about_title": {"message": "Hakkında"},
+  "about_dev": {"message": "Geliştirici: Fatih Eke"},
+  "about_contact": {"message": "İletişim: fatiheke@gmail.com"},
+  "settings_language": {"message": "Dil"}
+}

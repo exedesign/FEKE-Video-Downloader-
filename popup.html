@@ -536,29 +536,50 @@
   </style>
 </head>
 <body>
-  <div class="header"><h1>MGX Downloader</h1></div>
+  <div class="header" style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+    <h1 id="extTitle">FEKE-Video Downloader</h1>
+    <div style="display:flex;align-items:center;gap:6px;">
+      <select id="langSelect" style="background:#1b1b1b;color:#eee;border:1px solid #333;padding:4px 6px;font-size:11px;border-radius:4px;">
+        <option value="auto">AUTO</option>
+        <option value="en">EN</option>
+        <option value="tr">TR</option>
+        <option value="es">ES</option>
+        <option value="de">DE</option>
+        <option value="fr">FR</option>
+      </select>
+      <button id="btnAbout" style="background:#1b1b1b;color:#eee;border:1px solid #333;padding:6px 8px;font-size:11px;border-radius:4px;cursor:pointer;">?</button>
+    </div>
+  </div>
   <div id="app">
     <div class="panel" id="mergePanel">
       <div id="pageTitle" class="src-title"></div>
       <div class="row">
-        <label>Video Seç</label>
+  <label data-i18n="label_video_select">Video Seç</label>
         <select id="videoSelect"></select>
       </div>
       <div class="row" style="margin-top:8px;">
-        <label>Ses Seç</label>
+  <label data-i18n="label_audio_select">Ses Seç</label>
         <select id="audioSelect"></select>
       </div>
       <div style="margin-top:12px;">
-        <button id="downloadBtn">Indir</button>
+  <button id="downloadBtn" data-i18n="btn_download">İndir</button>
       </div>
       <div class="progress hidden" id="progressBox">
         <div class="bar"><div class="fill" id="pFill"></div></div>
-        <div class="status" id="pStatus">Hazır</div>
+  <div class="status" id="pStatus" data-i18n="status_ready">Hazır</div>
       </div>
       <div id="pLog" class="hidden"></div>
       <div class="status error hidden" id="pError"></div>
     </div>
-    <footer>HLS Tek Birleşik FFmpeg</footer>
+    <div id="aboutPanel" class="panel hidden" style="position:absolute;top:50px;right:10px;z-index:10;max-width:320px;">
+      <div style="font-size:12px;font-weight:600;margin-bottom:8px;" data-i18n="about_title">Hakkında</div>
+      <div style="font-size:11px;line-height:1.5;">
+        <div data-i18n="about_dev">Geliştirici: Fatih Eke</div>
+        <div data-i18n="about_contact">İletişim: fatiheke@gmail.com</div>
+        <div style="margin-top:6px;opacity:.7;">Locale Auto / Manual override desteği.</div>
+      </div>
+    </div>
+    <footer style="margin-top:8px;">HLS FFmpeg WASM</footer>
   </div>
   <script src="popup.js"></script>
 </body>

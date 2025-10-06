@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "FEKE-Video Downloader",
+  "name": "__MSG_ext_name__",
   "version": "1.0.0",
-  "description": "HLS (M3U8) ve doğrudan medya akışlarını yakalayıp tek tıkla birleştiren (FFmpeg wasm) Chromium MV3 uzantısı.",
+  "default_locale": "en",
+  "description": "__MSG_ext_description__",
   "permissions": [
     "webRequest", 
     "downloads",

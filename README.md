@@ -88,6 +88,36 @@ Remove-Item -Recurse -Force "$name"
 - Transferable ArrayBuffer ile daha az kopya
 - Chunked FS write (4MB)
 
+## 🌐 Internationalization (i18n)
+Uzantı çok dillidir ve şu an aşağıdaki locale paketleri bulunur:
+
+| Dil | Kodu | Durum |
+|-----|------|-------|
+| English | `en` | Tamamlandı |
+| Türkçe | `tr` | Tamamlandı |
+| Español | `es` | Temel metinler |
+| Deutsch | `de` | Temel metinler |
+| Français | `fr` | Temel metinler |
+
+### Çalışma Mantığı
+1. İlk yüklemede Chrome’un varsayılan `chrome.i18n` mekanizması tarayıcı diline göre locale seçer.
+2. Popup içindeki dil seçicisi (AUTO / EN / TR / …) kullanıcı tercihini `chrome.storage.local` içine `feke_lang` anahtarıyla kaydeder.
+3. Kullanıcı manuel bir dil seçtiğinde `_locales/<lang>/messages.json` dosyası runtime `fetch` ile okunur ve anında DOM üzerinde güncellenir (page refresh gerekmez).
+4. AUTO seçilirse runtime override sıfırlanır ve tekrar tarayıcı dili (veya extension default_locale) devreye girer.
+
+### Yeni Dil Ekleme
+1. `_locales/xx/messages.json` oluştur (xx = ISO dil kodu).
+2. `en/messages.json` dosyasındaki anahtarları kopyala, çevirilerini yaz.
+3. `manifest.json` içinde gerekirse `default_locale` güncel değilse ayarla.
+4. Popup’u yeniden aç ve dil seçerek test et.
+
+### Eklenebilecek İyileştirmeler (Gelecek)
+- Çeviri anahtarları için lint / eksik anahtar denetimi script’i.
+- İçerik script tarafı hata / log mesajlarının da locale’ye alınması.
+- Kullanıcı odaklı daha fazla UI metni (ilerleme açıklamaları vb.) locale kapsamına dahil edilmesi.
+
+> Not: Manifest tabanlı çeviriler (adı / açıklama) ancak extension yeniden yüklenince değişir; popup içi metinler anında güncellenir.
+
 ## 🔐 Güvenlik & CSP
 `wasm-unsafe-eval` izni, wasm modülünün MV3 ortamında yüklenebilmesi için gereklidir; sadece çekirdek kod çalışır, dinamik remote script yoktur.
 
