@@ -1,0 +1,37 @@
+# Node / Package artifacts (if later added)
+node_modules/
+*.log
+
+# System / OS
+.DS_Store
+Thumbs.db
+
+# Backups & temp
+*.backup
+*.bak
+*.tmp
+*.swp
+
+# HAR captures
+*.har
+
+# Build / Release archives
+*.zip
+*.7z
+*.tar
+*.tar.gz
+
+# Python cache
+__pycache__/
+*.pyc
+
+# FFmpeg native binaries (optional keep wasm core only)
+ffmpeg.exe
+*.dll
+
+# IDE
+.vscode/
+.idea/
+
+# Misc
+*.orig

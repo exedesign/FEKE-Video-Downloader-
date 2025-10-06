@@ -1,0 +1,59 @@
+{
+  "manifest_version": 3,
+  "name": "FEKE-Video Downloader",
+  "version": "1.0.0",
+  "description": "HLS (M3U8) ve doğrudan medya akışlarını yakalayıp tek tıkla birleştiren (FFmpeg wasm) Chromium MV3 uzantısı.",
+  "permissions": [
+    "webRequest", 
+    "downloads",
+    "storage",
+    "tabs",
+    "activeTab",
+    "unlimitedStorage"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "ffmpeg/ffmpeg-core.js",
+        "ffmpeg/ffmpeg-core.wasm",
+        "ffmpeg/ffmpeg-core.worker.js",
+        "ffmpeg/ffmpegWorker.js",
+        "icons/icon16.png",
+        "icons/icon32.png",
+        "icons/icon48.png",
+        "icons/icon128.png"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
+

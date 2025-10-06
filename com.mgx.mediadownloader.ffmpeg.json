@@ -1,0 +1,9 @@
+{
+  "name": "com.mgx.mediadownloader.ffmpeg",
+  "description": "MGX MediaDownloader FFmpeg Native Host",
+  "path": "C:\Users\MAN\Downloads\Video\MGX-MediaDownloader\ffmpeg_host.py",
+  "type": "stdio",
+  "allowed_origins": [
+    "chrome-extension://*/*"
+  ]
+}
