@@ -63,6 +63,16 @@ Remove-Item -Recurse -Force "$name"
 2. `ffmpeg/` altında çekirdek wasm dosyaları bulunduğundan emin olun.
 3. Kökte bir zip oluşturun ve GitHub Releases kısmına yükleyin.
 
+### Versiyon İsimlendirme (Tarih Kodu)
+`manifest.json` içinde ana semver `version` alanı (örn. 1.0.0) korunur; ek olarak `version_name` alanı **MMddyy** (AyGünYılınSonİkiHane) formatında kısa tarih damgası içerir.
+
+Örnek:
+| Tarih | version | version_name |
+|-------|---------|--------------|
+| 06 Ekim 2025 | 1.0.0 | 100625 |
+
+Yeni build alırken yalnızca `version_name` güncellenebilir (semantik değişiklik yoksa). Mağazalarda (Chrome Web Store gibi) görsel sürüm açıklaması için faydalı.
+
 ## 🗺 Yol Haritası (Özet)
 - Genişleyen platform yelpazesi (isim verilmeden çoğul akış kaynakları)
 - Ek akış protokolleri & formatları

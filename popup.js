@@ -67,7 +67,7 @@ function setErrorI18n(keyFallback, fallbackText){
 // ================== END I18N SUPPORT ==============
 let currentTabId = null;
 let cachedM3U8 = [];
-document.addEventListener('DOMContentLoaded', async () => { await loadUserLang(); initMinimal(); setupLanguageUI(); });
+document.addEventListener('DOMContentLoaded', async () => { await loadUserLang(); await loadRuntimeLocaleIfNeeded(); initMinimal(); setupLanguageUI(); });
 
 function setupLanguageUI(){
   const langSel = document.getElementById('langSelect');
@@ -80,6 +80,12 @@ function setupLanguageUI(){
       chrome.storage.local.set({ feke_lang: val });
       await loadRuntimeLocaleIfNeeded();
       translatePage();
+      // Liste yeniden kaybolmasın: mevcut cache varsa sadece çeviri güncelle, yoksa tekrar çek
+      if(!cachedM3U8 || !cachedM3U8.length){
+        refreshSources();
+      } else {
+        // Seçenek etiketleri (option text) dil bağımsız sayılır; statik label'lar yenilenir.
+      }
     });
   }
   if(aboutBtn && aboutPanel){
