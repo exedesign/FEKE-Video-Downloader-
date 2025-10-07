@@ -1,0 +1,14 @@
+{
+  "ext_name": {"message": "FEKE-Video 下载器"},
+  "ext_description": {"message": "支持 HLS (M3U8) 与直链媒体的下载 (WASM 复用)"},
+  "label_video_select": {"message": "选择视频"},
+  "label_audio_select": {"message": "选择音频"},
+  "btn_download": {"message": "下载"},
+  "status_ready": {"message": "就绪"},
+  "status_error_missing": {"message": "未找到视频变体或音频"},
+  "error_url_missing": {"message": "缺少 URL"},
+  "about_title": {"message": "关于"},
+  "about_dev": {"message": "开发者: Fatih Eke"},
+  "about_contact": {"message": "联系: fatiheke@gmail.com"},
+  "settings_language": {"message": "语言"}
+}
