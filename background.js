@@ -35,6 +35,12 @@ chrome.webRequest.onBeforeRequest.addListener(
       console.log(`[MGX] 🎬 M3U8 Captured: ${url}`);
       addM3U8File(tabId, url);
     }
+    // DASH MPD (ileride destek için topla)
+    else if (/\.mpd(\?.*)?$/i.test(url)) {
+      console.log(`[MGX] 📄 MPD Manifest Captured (future use): ${url}`);
+      // Şimdilik sadece videoFiles listesine not düşelim
+      addVideoFile(tabId, url);
+    }
     // Direkt video dosyaları (MP4, WebM, vb.)
     else if (/\.(mp4|webm|avi|mov|mkv)(\?.*)?$/i.test(url)) {
       console.log(`[MGX] 📹 Video Captured: ${url}`);
@@ -396,6 +402,32 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }).catch(error => {
       sendResponse({ error: error.message });
     });
+    return true;
+  }
+
+  // Dynamic içerikten (fetch/XHR hook) gelen kayıt
+  if (request.type === 'REGISTER_M3U8_DYNAMIC') {
+    try {
+      const { tabId, url, hint } = request;
+      if (!tabId || !url) { sendResponse({ ok:false, reason:'missing tabId/url' }); return true; }
+      if (!detectedMediaByTab[tabId]) {
+        detectedMediaByTab[tabId] = { m3u8Files: [], videoFiles: [], parsedPlaylists: {} };
+      }
+      // İnceleme: URL .m3u8 içermiyorsa ama #EXTM3U tespit edilmiş olabilir.
+      if (!/\.m3u8(\?.*)?$/i.test(url) && hint !== 'force') {
+        // Query param içinde .m3u8
+        if (!/m3u8/i.test(url)) { sendResponse({ ok:false, reason:'pattern reject'}); return true; }
+      }
+      // Duplicate guard
+      const tabStore = detectedMediaByTab[tabId];
+      if (tabStore.m3u8Files.some(f=>f.url===url)) { sendResponse({ ok:true, duplicate:true }); return true; }
+      tabStore.m3u8Files.push({ url, timestamp:Date.now(), type:'master', parsed:false, dynamic:true });
+      updateBadge(tabId);
+      sendResponse({ ok:true });
+    } catch(err){
+      console.error('[MGX] REGISTER_M3U8_DYNAMIC error', err);
+      sendResponse({ ok:false, error: err.message });
+    }
     return true;
   }
   

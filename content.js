@@ -7,6 +7,67 @@
 console.log('[MGX Content] Loaded');
 
 // ============================================================================
+// DYNAMIC HLS DISCOVERY (fetch/XHR Hook)
+// Bazı siteler m3u8 uzantısını gizleyip query param veya blob response ile servis eder.
+// Aşağıdaki hook response text içinde #EXTM3U gördüğünde background'a kayıt gönderir.
+// ============================================================================
+(function enableDynamicHlsCapture(){
+  const FORWARD_LIMIT = 3 * 1024 * 1024; // max inspect size
+  const originalFetch = window.fetch;
+  window.fetch = async function(input, init){
+    let url = (typeof input === 'string') ? input : (input?.url || '');
+    try {
+      const res = await originalFetch.apply(this, arguments);
+      // Sadece text/m3u8 veya application/vnd.apple.mpegurl benzeri tiplerde bak
+      const ctype = res.headers.get('content-type') || '';
+      const probable = /m3u8|mpegurl|application\/octet-stream/i.test(ctype) || /m3u8/i.test(url);
+      if(probable){
+        try {
+          const clone = res.clone();
+          const buf = await clone.arrayBuffer();
+            const slice = new TextDecoder().decode(buf.slice(0, Math.min(buf.byteLength, FORWARD_LIMIT)));
+          if(/#EXTM3U/.test(slice)){
+            chrome.runtime.sendMessage({
+              type:'REGISTER_M3U8_DYNAMIC',
+              url,
+              tabId: (chrome.devtools && chrome.devtools.inspectedWindow)? chrome.devtools.inspectedWindow.tabId : null,
+              hint: 'force'
+            });
+          }
+        } catch(e){ /* sessiz */ }
+      }
+      return res;
+    } catch(err){
+      throw err;
+    }
+  };
+
+  // XHR override
+  const origOpen = XMLHttpRequest.prototype.open;
+  const origSend = XMLHttpRequest.prototype.send;
+  XMLHttpRequest.prototype.open = function(method, url){
+    this.__mgx_url = url; return origOpen.apply(this, arguments);
+  };
+  XMLHttpRequest.prototype.send = function(){
+    const xhr = this;
+    xhr.addEventListener('load', function(){
+      try {
+        const ctype = xhr.getResponseHeader('content-type') || '';
+        if(xhr.response && (/#EXTM3U/.test(xhr.response) || /m3u8|mpegurl/i.test(ctype) || /m3u8/i.test(xhr.__mgx_url))){
+          chrome.runtime.sendMessage({
+            type:'REGISTER_M3U8_DYNAMIC',
+            url: xhr.__mgx_url,
+            tabId: null,
+            hint: /#EXTM3U/.test(xhr.response)?'force':undefined
+          });
+        }
+      } catch(e){ /* ignore */ }
+    });
+    return origSend.apply(this, arguments);
+  };
+})();
+
+// ============================================================================
 // MESSAGE LISTENER
 // ============================================================================
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
