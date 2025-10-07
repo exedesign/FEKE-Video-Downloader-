@@ -160,6 +160,7 @@ Uzantı çok dillidir ve şu an aşağıdaki locale paketleri bulunur:
 | Español | `es` | Temel metinler |
 | Deutsch | `de` | Temel metinler |
 | Français | `fr` | Temel metinler |
+| Русский | `ru` | Temel metinler |
 
 ### Çalışma Mantığı
 1. İlk yüklemede Chrome’un varsayılan `chrome.i18n` mekanizması tarayıcı diline göre locale seçer.

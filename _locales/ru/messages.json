@@ -1,0 +1,14 @@
+{
+  "ext_name": {"message": "FEKE-Video Downloader"},
+  "ext_description": {"message": "Загрузчик потоков HLS (M3U8) и прямых медиа с WASM mux"},
+  "label_video_select": {"message": "Выбрать видео"},
+  "label_audio_select": {"message": "Выбрать аудио"},
+  "btn_download": {"message": "Скачать"},
+  "status_ready": {"message": "Готово"},
+  "status_error_missing": {"message": "Вариант или аудио не найдены"},
+  "error_url_missing": {"message": "URL отсутствует"},
+  "about_title": {"message": "О программе"},
+  "about_dev": {"message": "Разработчик: Fatih Eke"},
+  "about_contact": {"message": "Контакт: fatiheke@gmail.com"},
+  "settings_language": {"message": "Язык"}
+}
